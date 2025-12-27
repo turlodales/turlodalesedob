@@ -952,6 +952,14 @@
             <span class="nav-label">Daily Occurrence Book</span>
           </button>
           <button class="nav-btn">
+          <span class="nav-icon">📦</span>
+          <span class="nav-label">Deliveries</span>
+          </button>
+          <button class="nav-btn">
+          <span class="nav-icon">🔑</span>
+          <span class="nav-label">Key Audit</span>
+          </button>
+          <button class="nav-btn">
             <span class="nav-icon">⏱</span>
             <span class="nav-label">Patrol Routes</span>
           </button>
@@ -1365,6 +1373,38 @@
       </div>
       </section>
 
+      <!-- Deliveries View -->
+<section id="deliveries-view" style="display:none;">
+  <div class="card" style="margin-top:12px;">
+    <div class="card-header">
+      <div class="card-title">Deliveries Log</div>
+      <span class="card-tag">Overview</span>
+    </div>
+    <div class="card-body" style="font-size:0.8rem; color:var(--muted);">
+      <p>All inbound and outbound deliveries recorded for this shift.</p>
+      <p style="margin-top:8px;">
+        Log courier arrivals, vehicle registrations, access times, and handover notes.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Key Audit View -->
+<section id="key-audit-view" style="display:none;">
+  <div class="card" style="margin-top:12px;">
+    <div class="card-header">
+      <div class="card-title">Key Audit Register</div>
+      <span class="card-tag">Security</span>
+    </div>
+    <div class="card-body" style="font-size:0.8rem; color:var(--muted);">
+      <p>Audit trail for all site keys.</p>
+      <p style="margin-top:8px;">
+        Record key numbers, holders, issue/return times, and discrepancies.
+      </p>
+    </div>
+  </div>
+</section>
+
             <!-- Footer -->
     <footer class="main-footer">
   <div>© 2025 Turlodales EDOB · All events logged and audited. Page Version 1.0.3</div>
@@ -1638,6 +1678,8 @@
     const navButtons = document.querySelectorAll('.nav-btn');
     let dashboardBtn = null;
     let dobBtn = null;
+    let deliveriesBtn = null;
+    let keyAuditBtn = null;
     let patrolBtn = null;
     let sitesBtn = null;
     let guardsBtn = null;
@@ -1650,6 +1692,10 @@
         dashboardBtn = btn;
       } else if (label.includes('Daily Occurrence Book')) {
         dobBtn = btn;
+        else if (label.includes('Deliveries')) {
+        deliveriesBtn = btn;
+        else if (label.includes('Key Audit')) {
+        deliveriesBtn = btn;
       } else if (label.includes('Patrol Routes')) {
         patrolBtn = btn;
       } else if (label.includes('Sites')) {
@@ -1665,6 +1711,8 @@
 
     const dashboardView = document.getElementById('dashboard-view');
     const dobView = document.getElementById('dob-view');
+    const deliveriesView = document.getElementById('deliveries-view');
+    const keyAuditView = document.getElementById('key-audit-view');
     const patrolView = document.getElementById('patrol-view');
     const sitesView = document.getElementById('sites-view');
     const guardsView = document.getElementById('guards-view');
@@ -1679,7 +1727,7 @@
     }
 
     function hideAllViews() {
-      [dashboardView, dobView, patrolView, sitesView, guardsView, clientsView, settingsView, ukThreatCard].forEach(view => {
+      [dashboardView, dobView, deliveriesView, keyAuditView, patrolView, sitesView, guardsView, clientsView, settingsView, ukThreatCard].forEach(view => {
         if (view) view.style.display = 'none';
       });
     }
@@ -1702,6 +1750,22 @@
       pageTitleEl.textContent = 'Daily Occurrence Book';
       pageKickerEl.innerHTML = 'All events, notes, patrol activities, and visitor logs recorded for this shift.';
       renderDOBThreatLog();
+    }
+    
+    function showDeliveries() {
+      hideAllViews();
+      if (deliveriesView) deliveriesView.style.display = '';
+      document.title = 'Turlodales EDOB – Deliveries';
+      pageTitleEl.textContent = 'Deliveries Log';
+      pageKickerEl.innerHTML = 'Incoming and outgoing deliveries recorded during this shift.';
+    }
+
+    function showKeyAudit() {
+      hideAllViews();
+      if (keyAuditView) keyAuditView.style.display = '';
+      document.title = 'Turlodales EDOB – Key Audit';
+      pageTitleEl.textContent = 'Key Audit Register';
+      pageKickerEl.innerHTML = 'Issue, return, and audit trail for all site keys.';
     }
 
     function showPatrol() {
@@ -1757,6 +1821,22 @@
         clearActiveNav();
         dobBtn.classList.add('active');
         showDOB();
+      });
+    }
+
+    if (deliveriesBtn) {
+      deliveriesBtn.addEventListener('click', () => {
+      clearActiveNav();
+      deliveriesBtn.classList.add('active');
+      showDeliveries();
+      });
+    }
+
+    if (keyAuditBtn) {
+      keyAuditBtn.addEventListener('click', () => {
+      clearActiveNav();
+      keyAuditBtn.classList.add('active');
+      showKeyAudit();
       });
     }
 
