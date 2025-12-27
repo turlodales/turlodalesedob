@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Turlodales EDOB – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-alt: #02081a;
+      --card-bg: #020617;
+      --card-soft: rgba(15, 23, 42, 0.9);
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.1);
+      --accent-2: #38bdf8;
+      --border: rgba(148, 163, 184, 0.25);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #fb7185;
+      --warning: #fbbf24;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #020617, #000);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 72px minmax(0, 1fr);
+      }
+      .sidebar-content .brand-text,
+      .sidebar-content .nav-label,
+      .sidebar-content .nav-title {
+        display: none;
+      }
+      .sidebar-content .brand-logo {
+        margin: 0 auto;
+      }
+      .sidebar-content nav {
+        align-items: center;
+      }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: radial-gradient(circle at top, rgba(34,197,94,0.3), transparent 60%),
+                  radial-gradient(circle at bottom, rgba(56,189,248,0.25), transparent 60%),
+                  linear-gradient(180deg, #020617, #020617);
+      border-right: 1px solid var(--border);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar-content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: radial-gradient(circle at 30% 0%, #22c55e 0, #15803d 40%, #052e16 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: #ecfdf5;
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.5);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .nav-group-title {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 10px 4px 4px;
+    }
+
+    .nav-btn {
+      border-radius: 12px;
+      border: 1px solid transparent;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      transition: background 0.12s ease, border 0.12s ease, color 0.12s ease;
+    }
+
+    .nav-btn .nav-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.8rem;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.35));
+      border-color: rgba(74, 222, 128, 0.5);
+      color: #bbf7d0;
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.5);
+    }
+
+    .nav-btn:hover:not(.active) {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(148, 163, 184, 0.4);
+      color: #e5e7eb;
+    }
+
+    .nav-label {
+      flex: 1;
+    }
+
+    .nav-badge {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(148, 163, 184, 0.3);
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at 30% 0%, #38bdf8 0, #0ea5e9 40%, #0369a1 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-pill {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      font-size: 0.7rem;
+      color: #bbf7d0;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 999px;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    /* Main */
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .main-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(15,23,42,0.85));
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: space-between;
+    }
+
+    .main-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .page-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-kicker {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+    
+    .main-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 5px 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      min-width: 0;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: var(--text);
+      font-size: 0.82rem;
+      width: 120px;
+    }
+
+    @media (min-width: 900px) {
+      .search-box input {
+        width: 180px;
+      }
+    }
+
+    .header-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-btn.primary {
+      border-color: rgba(74, 222, 128, 0.7);
+      background: radial-gradient(circle at 30% 0%, #4ade80 0, #22c55e 35%, #16a34a 100%);
+      color: #022c22;
+      box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+      font-weight: 600;
+    }
+
+    .main-body {
+      flex: 1;
+      padding: 16px 18px 18px;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.6fr);
+    }
+
+    @media (max-width: 1100px) {
+      .main-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 12px 12px 10px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-tag {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .card-body {
+      font-size: 0.82rem;
+    }
+
+    /* KPI Row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .kpi-card {
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 8px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .kpi-main {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .kpi-pill {
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #bbf7d0;
+    }
+
+    .kpi-pill.warn {
+      background: rgba(251, 191, 36, 0.16);
+      color: #fef3c7;
+    }
+
+    .kpi-pill.danger {
+      background: rgba(248, 113, 113, 0.18);
+      color: #fee2e2;
+    }
+
+    /* Table */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2px;
+      font-size: 0.78rem;
+    }
+
+    .table th,
+    .table td {
+      padding: 6px 5px;
+      text-align: left;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .table th {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-status {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .badge-status.open {
+      background: rgba(248, 113, 113, 0.15);
+      border-color: rgba(248, 113, 113, 0.8);
+      color: #fecaca;
+    }
+
+    .badge-status.investigation {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: rgba(251, 191, 36, 0.7);
+      color: #fef3c7;
+    }
+
+    .badge-status.closed {
+      background: rgba(34, 197, 94, 0.12);
+      border-color: rgba(34, 197, 94, 0.7);
+      color: #bbf7d0;
+    }
+
+    .badge-priority {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+    }
+
+    .badge-priority.high {
+      background: rgba(248, 113, 113, 0.2);
+      color: #fecaca;
+    }
+
+    .badge-priority.medium {
+      background: rgba(251, 191, 36, 0.22);
+      color: #fef3c7;
+    }
+
+    .badge-priority.low {
+      background: rgba(148, 163, 184, 0.2);
+      color: #e5e7eb;
+    }
+
+    /* Timeline */
+    .timeline {
+      margin-top: 4px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: flex-start;
+      font-size: 0.78rem;
+    }
+
+    .timeline-marker {
+      width: 12px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .marker-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: 2px solid #0ea5e9;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+    }
+
+    .timeline-content {
+      border-left: 1px dashed rgba(55, 65, 81, 0.9);
+      padding-left: 8px;
+      padding-bottom: 4px;
+    }
+
+    .timeline-title {
+      color: #e5e7eb;
+    }
+
+    .timeline-sub {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .timeline-time {
+      color: var(--muted);
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    /* Shift summary */
+    .shift-grid {
+      margin-top: 4px;
+      display: grid;
+      gap: 6px;
+      font-size: 0.78rem;
+    }
+
+    .shift-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 6px;
+      border-radius: 9px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      gap: 10px;
+    }
+
+    .shift-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .shift-title {
+      font-weight: 500;
+    }
+
+    .shift-sub {
+      color: var(--muted);
+      font-size: 0.72rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .shift-tag {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    
+    /* Right column cards (sites) */
+    .sites-grid {
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .site-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 7px 8px;
+      font-size: 0.78rem;
+      display: grid;
+      gap: 4px;
+    }
+
+    .site-top-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .site-name {
+      font-weight: 500;
+      font-size: 0.8rem;
+    }
+
+    .site-tag {
+      font-size: 0.68rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--muted);
+    }
+
+    .site-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+
+    .site-meta span {
+      font-size: 0.7rem;
+    }
+
+    .mini-chart {
+      margin-top: 6px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      display: flex;
+    }
+
+    .mini-bar {
+      flex: 1;
+      border-right: 1px solid rgba(15, 23, 42, 0.9);
+    }
+
+    .mini-bar:nth-child(-n+3) {
+      background: rgba(34, 197, 94, 0.5);
+    }
+
+    .mini-bar:nth-child(4),
+    .mini-bar:nth-child(5) {
+      background: rgba(251, 191, 36, 0.5);
+    }
+
+    .mini-bar:nth-child(n+6) {
+      background: rgba(248, 113, 113, 0.55);
+    }
+
+    
+    /* Settings toggles */
+    .settings-grid {
+      display: grid;
+      gap: 8px;
+      font-size: 0.82rem;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 9px;
+      background: rgba(15,23,42,0.96);
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+
+    .setting-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .setting-title {
+      font-weight: 500;
+    }
+
+    .setting-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .setting-toggle {
+      width: 32px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,1);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .setting-toggle-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 1);
+      transition: transform 0.16s ease, background 0.16s ease;
+    }
+
+    .setting-toggle.on {
+      background: rgba(22,163,74,0.3);
+      border-color: rgba(34,197,94,0.9);
+    }
+
+    .setting-toggle.on .setting-toggle-knob {
+      transform: translateX(12px);
+      background: #bbf7d0;
+    }
+
+    /* Generic flex helpers */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 1100px) {
+      .two-col-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+  /* UK Threat Level Card */
+    .threat-level-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .threat-level-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .threat-level-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      box-shadow: 0 0 10px currentColor;
+    }
+
+    /* Colour coding per level */
+    .threat-low {
+      background: rgba(34,197,94,0.12);
+      color: #bbf7d0;
+      border-color: rgba(34,197,94,0.8);
+    }
+
+    .threat-moderate {
+      background: rgba(59,130,246,0.12);
+      color: #bfdbfe;
+      border-color: rgba(59,130,246,0.8);
+    }
+
+    .threat-substantial {
+      background: rgba(251,191,36,0.16);
+      color: #fef3c7;
+      border-color: rgba(251,191,36,0.8);
+    }
+
+    .threat-severe {
+      background: rgba(248,113,113,0.20);
+      color: #fee2e2;
+      border-color: rgba(248,113,113,0.9);
+    }
+
+    .threat-critical {
+      background: rgba(220,38,38,0.24);
+      color: #fee2e2;
+      border-color: rgba(239,68,68,0.95);
+      box-shadow: 0 0 18px rgba(248,113,113,0.7);
+    }
+
+    .threat-unknown {
+      background: rgba(148,163,184,0.16);
+      color: #e5e7eb;
+      border-color: rgba(148,163,184,0.9);
+    }
+
+    .threat-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .threat-history {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .threat-history-title {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    .threat-history-list {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .threat-history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: #e5e7eb;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .threat-history-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .threat-history-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .threat-history-time {
+      color: var(--muted);
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    /* Threat alert pulse (used when SEVERE/CRITICAL) */
+    .threat-pulse {
+      animation: threatPulse 1.1s ease-in-out infinite;
+    }
+
+    @keyframes threatPulse {
+      0%, 100% { transform: translateZ(0) scale(1); }
+      50% { transform: translateZ(0) scale(1.02); }
+    }
+
+    .header-btn.threat-alert {
+      border-color: rgba(248, 113, 113, 0.9);
+      color: #fee2e2;
+      box-shadow: 0 0 22px rgba(248,113,113,0.55);
+    }
+
+    /* Footer */
+    .main-footer {
+      padding: 6px 18px 10px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.98);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-content">
+        <div class="brand">
+          <div class="brand-logo">ED</div>
+          <div class="brand-text">
+            <div class="brand-title">Turlodales EDOB</div>
+            <div class="brand-sub">Control Room</div>
+          </div>
+        </div>
+
+        <nav>
+          <div class="nav-group-title">Overview</div>
+          <button class="nav-btn active">
+            <span class="nav-icon">◎</span>
+            <span class="nav-label">Dashboard</span>
+            <span class="nav-badge">Live</span>
+          </button>
+          <button class="nav-btn">
+            <span class="nav-icon">☰</span>
+            <span class="nav-label">Daily Occurrence Book</span>
+          </button>
+          <button class="nav-btn">
+            <span class="nav-icon">⏱</span>
+            <span class="nav-label">Patrol Routes</span>
+          </button>
+
+          <div class="nav-group-title">Sites & Staff</div>
+          <button class="nav-btn">
+            <span class="nav-icon">🏢</span>
+            <span class="nav-label">Sites</span>
+          </button>
+          <button class="nav-btn">
+            <span class="nav-icon">🛡</span>
+            <span class="nav-label">Guards</span>
+          </button>
+          <button class="nav-btn">
+            <span class="nav-icon">👥</span>
+            <span class="nav-label">Clients</span>
+          </button>
+
+          <div class="nav-group-title">Admin</div>
+          <button class="nav-btn">
+            <span class="nav-icon">⚙</span>
+            <span class="nav-label">Settings</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-row">
+          <div class="user-avatar">OC</div>
+          <div>
+            <div>Ops Controller</div>
+            <div style="font-size:0.7rem;">night.ops@turlodales.com</div>
+          </div>
+        </div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          All systems online
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <!-- Header -->
+      <header class="main-header">
+        <div class="main-header-left">
+          <div class="page-title">
+            Tonight’s Security Overview
+            <span style="font-size:0.8rem; color:var(--muted);"> 19:00–07:00</span>
+          </div>
+          <div class="page-kicker">
+            Monitoring <strong>24 sites</strong>, <strong>73 active guards</strong>, and <strong>3 open incidents</strong>.
+          </div>
+        </div>
+        <div class="main-header-right">
+          <div class="pill">
+            <span class="pill-dot"></span>
+            EDOB synced 12 sec ago
+          </div>
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="Search sites, guards, incidents" />
+          </div>
+          <button class="header-btn">⚠ Alerts</button>
+          <button class="header-btn" id="logout-btn">⎋ Log out</button>
+          <button class="header-btn primary">＋ New Incident</button>
+        </div>
+      </header>
+
+      <!-- UK Threat Level -->
+      <section class="card" id="uk-threat-card" style="max-width:420px;">
+        <div class="card-header">
+          <div class="card-title">UK National Threat Level</div>
+          <span class="card-tag">MI5</span>
+        </div>
+
+        <div class="card-body">
+          <div class="threat-level-row">
+            <div id="threat-pill" class="threat-level-pill threat-unknown">
+              <span class="dot"></span>
+              <span id="threat-text">Unknown</span>
+            </div>
+            <div id="threat-updated" class="card-tag">—</div>
+          </div>
+          <div class="threat-meta">
+            Source: UK Security Service (MI5)
+          </div>
+          <div class="threat-history">
+            <div class="threat-history-title">Recent changes</div>
+            <ul id="threat-history-list" class="threat-history-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- DASHBOARD VIEW -->
+      <main id="dashboard-view" class="main-body">
+        <!-- Left column -->
+        <section>
+          <!-- KPIs -->
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <div class="kpi-label">Open Incidents</div>
+              <div class="kpi-main">
+                <span>3</span>
+                <span class="kpi-pill danger">2 High</span>
+              </div>
+              <div style="font-size:0.7rem; color:var(--muted);">Across 3 sites</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Patrol Check-ins</div>
+              <div class="kpi-main">
+                <span>186</span>
+                <span class="kpi-pill">+18% vs last night</span>
+              </div>
+              <div style="font-size:0.7rem; color:var(--muted);">Last 24 hours</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Late Check-ins</div>
+              <div class="kpi-main">
+                <span>5</span>
+                <span class="kpi-pill warn">Review needed</span>
+              </div>
+              <div style="font-size:0.7rem; color:var(--muted);">3 guards, 2 sites</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Visitor Entries</div>
+              <div class="kpi-main">
+                <span>43</span>
+                <span class="kpi-pill">Logged in EDOB</span>
+              </div>
+              <div style="font-size:0.7rem; color:var(--muted);">Today</div>
+            </div>
+          </div>
+
+          <!-- Incidents card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                Active Incidents
+                <span style="font-size:0.72rem; color:var(--muted);">· Sorted by priority</span>
+              </div>
+              <div class="card-tag">View all →</div>
+            </div>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Incident</th>
+                    <th>Site</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Assigned</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Unauthorized vehicle at rear gate</td>
+                    <td>Warehouse North</td>
+                    <td><span class="badge-status open">Open</span></td>
+                    <td><span class="badge-priority high">High</span></td>
+                    <td>Guard #204</td>
+                  </tr>
+                  <tr>
+                    <td>Access card mismatch – main lobby</td>
+                    <td>HQ – Tower 1</td>
+                    <td><span class="badge-status investigation">Investigation</span></td>
+                    <td><span class="badge-priority medium">Medium</span></td>
+                    <td>Supervisor #31</td>
+                  </tr>
+                  <tr>
+                    <td>Door left unsecured – loading bay</td>
+                    <td>Campus South</td>
+                    <td><span class="badge-status open">Open</span></td>
+                    <td><span class="badge-priority medium">Medium</span></td>
+                    <td>Guard #087</td>
+                  </tr>
+                  <tr>
+                    <td>False alarm – motion sensor</td>
+                    <td>Retail Park East</td>
+                    <td><span class="badge-status closed">Closed</span></td>
+                    <td><span class="badge-priority low">Low</span></td>
+                    <td>Control Room</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <!-- EDOB timeline -->
+          <div class="card" style="margin-top:10px;">
+            <div class="card-header">
+              <div class="card-title">
+                EDOB Timeline – Last 60 mins
+              </div>
+              <div class="card-tag">Daily Occurrence Book</div>
+            </div>
+            <div class="card-body">
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-marker">
+                    <div class="marker-dot"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">Vehicle inspection complete</div>
+                    <div class="timeline-sub">Guard #204 · Warehouse North · Plate: KX15 ZNF</div>
+                  </div>
+                  <div class="timeline-time">21:42</div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-marker">
+                    <div class="marker-dot"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">Fire exit checked &amp; sealed</div>
+                    <div class="timeline-sub">Guard #117 · Campus South · Block C stairwell</div>
+                  </div>
+                  <div class="timeline-time">21:37</div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-marker">
+                    <div class="marker-dot"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">Visitor exited building</div>
+                    <div class="timeline-sub">HQ – Tower 1 · Badge 00431 signed out</div>
+                  </div>
+                  <div class="timeline-time">21:28</div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="timeline-marker">
+                    <div class="marker-dot"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">Night shift handover notes updated</div>
+                    <div class="timeline-sub">Control Room · Policy reminder: rear gates locked 23:00</div>
+                  </div>
+                  <div class="timeline-time">21:15</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right column -->
+        <section>
+          <!-- Sites -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                Site Health
+                <span style="font-size:0.75rem; color:var(--muted);">· Quick overview</span>
+              </div>
+              <div class="card-tag">24 sites</div>
+            </div>
+            <div class="card-body">
+              <div class="sites-grid">
+                <div class="site-card">
+                  <div class="site-top-row">
+                    <div class="site-name">Warehouse North</div>
+                    <div class="site-tag">Guards: 5</div>
+                  </div>
+                  <div class="site-meta">
+                    <span>Incidents: 1</span>
+                    <span>Patrols: 21</span>
+                  </div>
+                  <div class="mini-chart">
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                  </div>
+                </div>
+
+                <div class="site-card">
+                  <div class="site-top-row">
+                    <div class="site-name">HQ – Tower 1</div>
+                    <div class="site-tag">Guards: 8</div>
+                  </div>
+                  <div class="site-meta">
+                    <span>Incidents: 1</span>
+                    <span>Patrols: 34</span>
+                  </div>
+                  <div class="mini-chart">
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                  </div>
+                </div>
+
+                <div class="site-card">
+                  <div class="site-top-row">
+                    <div class="site-name">Campus South</div>
+                    <div class="site-tag">Guards: 6</div>
+                  </div>
+                  <div class="site-meta">
+                    <span>Incidents: 1</span>
+                    <span>Patrols: 19</span>
+                  </div>
+                  <div class="mini-chart">
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                  </div>
+                </div>
+
+                <div class="site-card">
+                  <div class="site-top-row">
+                    <div class="site-name">Retail Park East</div>
+                    <div class="site-tag">Guards: 4</div>
+                  </div>
+                  <div class="site-meta">
+                    <span>Incidents: 0</span>
+                    <span>Patrols: 12</span>
+                  </div>
+                  <div class="mini-chart">
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                    <div class="mini-bar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Shift summary -->
+          <div class="card" style="margin-top:10px;">
+            <div class="card-header">
+              <div class="card-title">
+                Shift Summary – Current
+              </div>
+              <div class="card-tag">Download handover</div>
+            </div>
+            <div class="card-body">
+              <div class="shift-grid">
+                <div class="shift-row">
+                  <div class="shift-main">
+                    <div class="shift-title">Night patrol – North sector</div>
+                    <div class="shift-sub">Guards #204, #219 · Sites: Warehouse North, Retail Park East</div>
+                  </div>
+                  <div class="shift-tag">On patrol</div>
+                </div>
+
+                <div class="shift-row">
+                  <div class="shift-main">
+                    <div class="shift-title">Access control – HQ Tower 1</div>
+                    <div class="shift-sub">Guards #031, #117 · Front desk &amp; dock</div>
+                  </div>
+                  <div class="shift-tag">Stable</div>
+                </div>
+
+                <div class="shift-row">
+                  <div class="shift-main">
+                    <div class="shift-title">Campus perimeter sweep</div>
+                    <div class="shift-sub">Guards #087, #112 · Campus South, Block C/D</div>
+                  </div>
+                  <div class="shift-tag">Next check-in 22:05</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Notes</div>
+              <div class="card-tag">Dashboard</div>
+            </div>
+            <div class="card-body" style="font-size:0.8rem; color:var(--muted);">
+              <p>Stub panel for announcements / handover notes.</p>
+              <p style="margin-top:8px;">Tip: click “Daily Occurrence Book” to view the Threat Level Log history.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+               
+      
+      <!-- Daily Occurrence Book View -->
+      <section id="dob-view" style="display:none;">
+      <!-- Threat Level Log (auto from MI5) -->
+      <div class="card" style="margin-top:12px;">
+        <div class="card-header">
+          <div class="card-title">Threat Level Log</div>
+          <span class="card-tag">MI5</span>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Level</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="dob-threat-log-body"></tbody>
+          </table>
+        </div>
+      </div>
+      </section>
+
+            <!-- Footer -->
+    <footer class="main-footer">
+  <div>© 2025 Turlodales EDOB · All events logged and audited. Page Version 1.0.3</div>
+  <div>Server time: 21:48 · Encryption: TLS 1.3 · Last backup: 21:30</div>
+</footer>
+
+  <!-- Firebase Auth (protect this page) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script>
+    // IMPORTANT: Paste the SAME firebaseConfig you use on your login page
+    const firebaseConfig = {
+      apiKey: "AIzaSyAa1_MJoHshYMALo-mLjxxNXQnmnc3rVD8",
+      authDomain: "turlodalessecurity.firebaseapp.com",
+      projectId: "turlodalessecurity",
+      storageBucket: "turlodalessecurity.appspot.com",
+      messagingSenderId: "733342888646",
+      appId: "1:733342888646:web:1e15c31e46003b60829dc7"
+    };
+
+    // Prevent double-init if this page is loaded in a larger app shell
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const auth = firebase.auth();
+    // Threat refresh interval handle (so we can start/stop it safely)
+    let threatRefreshInterval = null;
+
+    // Hide UI until we know auth state (avoids a brief flash of the dashboard)
+    document.body.style.visibility = 'hidden';
+
+    // ✅ Protect the dashboard: if not signed in, bounce to login
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        // Stop any background timers if auth is lost
+        if (threatRefreshInterval) {
+          clearInterval(threatRefreshInterval);
+          threatRefreshInterval = null;
+        }
+        window.location.replace('index.html');
+        return;
+      }
+
+      // Auth confirmed: show UI and initialize the dashboard logic once
+      document.body.style.visibility = 'visible';
+
+      // Kick off initial render AFTER auth is confirmed
+      try {
+        if (typeof showDashboard === 'function') showDashboard();
+        if (typeof renderThreatHistory === 'function') renderThreatHistory();
+        if (typeof renderDOBThreatLog === 'function') renderDOBThreatLog();
+      } catch (_) {}
+
+      // Start the periodic threat refresh only while signed in
+      if (!threatRefreshInterval) {
+        threatRefreshInterval = setInterval(() => {
+          try {
+            if (window.firebase && firebase.auth && firebase.auth().currentUser) {
+              if (typeof loadUKThreatLevel === 'function') loadUKThreatLevel();
+            }
+          } catch (_) {}
+        }, 5 * 60 * 1000);
+      }
+    });
+
+    // Logout button
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+      try {
+        if (threatRefreshInterval) {
+          clearInterval(threatRefreshInterval);
+          threatRefreshInterval = null;
+        }
+        await auth.signOut();
+      } finally {
+        window.location.replace('index.html');
+      }
+    });
+  </script>
+
+  <!-- TAB SWITCHING + SETTINGS LOGIC WITH DOCUMENT.TITLE -->
+  <script>
+    // UK Threat Level (MI5)
+    async function loadUKThreatLevel() {
+      try {
+        const res = await fetch('https://www.mi5.gov.uk/threat-levels/json', {
+          cache: 'no-store'
+        });
+        const data = await res.json();
+
+        const level = (data.level || '').toLowerCase();
+        const updated = data.updated || '';
+
+        // Cache the last known value for offline fallback
+        try {
+          localStorage.setItem('ukThreatLevelCache', JSON.stringify({
+            level: data.level || '',
+            updated: data.updated || '',
+            cachedAt: new Date().toISOString()
+          }));
+        } catch (_) {}
+
+        const pill = document.getElementById('threat-pill');
+        const text = document.getElementById('threat-text');
+        const meta = document.getElementById('threat-updated');
+
+        if (!pill || !text) return;
+
+        pill.className = 'threat-level-pill';
+
+        const map = {
+          low: 'threat-low',
+          moderate: 'threat-moderate',
+          substantial: 'threat-substantial',
+          severe: 'threat-severe',
+          critical: 'threat-critical'
+        };
+
+        pill.classList.add(map[level] || 'threat-unknown');
+        text.textContent = level ? level.toUpperCase() : 'UNKNOWN';
+
+        if (updated) {
+          meta.textContent = 'Updated: ' + updated;
+        }
+
+        // Highlight alerts for SEVERE/CRITICAL
+        const alertBtn = document.querySelector('.header-btn:not(.primary)');
+        const isHigh = (level === 'severe' || level === 'critical');
+
+        if (isHigh) {
+          pill.classList.add('threat-pulse');
+          if (alertBtn) alertBtn.classList.add('threat-alert');
+        } else {
+          pill.classList.remove('threat-pulse');
+          if (alertBtn) alertBtn.classList.remove('threat-alert');
+        }
+        // Threat history log (on successful fetch)
+        recordThreatLevelChange(level, updated, 'live');
+      } catch (e) {
+        console.warn('Threat level unavailable', e);
+
+        // Offline / blocked CORS fallback: show last cached value if available
+        try {
+          const raw = localStorage.getItem('ukThreatLevelCache');
+          if (!raw) return;
+
+          const cached = JSON.parse(raw);
+          const cachedLevel = (cached.level || '').toLowerCase();
+          const cachedUpdated = cached.updated || '';
+          const cachedAt = cached.cachedAt || '';
+
+          const pill = document.getElementById('threat-pill');
+          const text = document.getElementById('threat-text');
+          const meta = document.getElementById('threat-updated');
+
+          if (!pill || !text) return;
+
+          pill.className = 'threat-level-pill';
+
+          const map = {
+            low: 'threat-low',
+            moderate: 'threat-moderate',
+            substantial: 'threat-substantial',
+            severe: 'threat-severe',
+            critical: 'threat-critical'
+          };
+
+          pill.classList.add(map[cachedLevel] || 'threat-unknown');
+          text.textContent = cachedLevel ? cachedLevel.toUpperCase() : 'UNKNOWN';
+
+          if (meta) {
+            const label = cachedUpdated ? ('Updated: ' + cachedUpdated) : 'Updated: —';
+            meta.textContent = label + (cachedAt ? (' (cached ' + cachedAt + ')') : ' (cached)');
+          }
+          // Threat history log (on cached fallback)
+          recordThreatLevelChange(cachedLevel, cachedUpdated, 'cache');
+        } catch (_) {}
+      }
+    }
+
+    // Threat level history (last 10 changes)
+    function getThreatHistory() {
+      try {
+        const raw = localStorage.getItem('ukThreatLevelHistory');
+        return raw ? JSON.parse(raw) : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function saveThreatHistory(items) {
+      try {
+        localStorage.setItem('ukThreatLevelHistory', JSON.stringify(items));
+      } catch (_) {}
+    }
+
+    function fmtTime(iso) {
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      } catch (_) {
+        return iso || '';
+      }
+    }
+
+    function renderThreatHistory() {
+      const list = document.getElementById('threat-history-list');
+      if (!list) return;
+
+      const history = getThreatHistory();
+      list.innerHTML = '';
+
+      const map = {
+        low: 'threat-low',
+        moderate: 'threat-moderate',
+        substantial: 'threat-substantial',
+        severe: 'threat-severe',
+        critical: 'threat-critical'
+      };
+
+      history.slice(0, 10).forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'threat-history-item';
+
+        const left = document.createElement('div');
+        left.className = 'threat-history-left';
+
+        const pill = document.createElement('span');
+        pill.className = 'threat-history-pill ' + (map[(item.level || '').toLowerCase()] || 'threat-unknown');
+        pill.textContent = (item.level || 'UNKNOWN').toUpperCase();
+
+        const note = document.createElement('span');
+        note.style.color = 'var(--muted)';
+        note.style.whiteSpace = 'nowrap';
+        note.textContent = item.source === 'cache' ? 'cached' : 'live';
+
+        left.appendChild(pill);
+        left.appendChild(note);
+
+        const time = document.createElement('div');
+        time.className = 'threat-history-time';
+        time.textContent = fmtTime(item.at || '');
+
+        li.appendChild(left);
+        li.appendChild(time);
+
+        list.appendChild(li);
+      });
+    }
+
+    function recordThreatLevelChange(level, updated, source) {
+      const normalized = (level || '').toLowerCase() || 'unknown';
+
+      const history = getThreatHistory();
+      const last = history[0];
+
+      // Only record if the level changed, or if the history is empty
+      if (!last || (last.level || '').toLowerCase() !== normalized) {
+        history.unshift({
+          level: normalized,
+          updated: updated || '',
+          at: new Date().toISOString(),
+          source: source || 'live'
+        });
+        saveThreatHistory(history.slice(0, 10));
+      }
+
+      renderThreatHistory();
+      renderDOBThreatLog();
+    }
+    const navButtons = document.querySelectorAll('.nav-btn');
+    let dashboardBtn = null;
+    let dobBtn = null;
+    let patrolBtn = null;
+    let sitesBtn = null;
+    let guardsBtn = null;
+    let clientsBtn = null;
+    let settingsBtn = null;
+
+    navButtons.forEach(btn => {
+      const label = btn.textContent || "";
+      if (label.includes('Dashboard')) {
+        dashboardBtn = btn;
+      } else if (label.includes('Daily Occurrence Book')) {
+        dobBtn = btn;
+      } else if (label.includes('Patrol Routes')) {
+        patrolBtn = btn;
+      } else if (label.includes('Sites')) {
+        sitesBtn = btn;
+      } else if (label.includes('Guards')) {
+        guardsBtn = btn;
+      } else if (label.includes('Clients')) {
+        clientsBtn = btn;
+      } else if (label.includes('Settings')) {
+        settingsBtn = btn;
+      }
+    });
+
+    const dashboardView = document.getElementById('dashboard-view');
+    const dobView = document.getElementById('dob-view');
+    const patrolView = document.getElementById('patrol-view');
+    const sitesView = document.getElementById('sites-view');
+    const guardsView = document.getElementById('guards-view');
+    const clientsView = document.getElementById('clients-view');
+    const settingsView = document.getElementById('settings-view');
+    const ukThreatCard = document.getElementById('uk-threat-card');
+    const pageTitleEl = document.querySelector('.page-title');
+    const pageKickerEl = document.querySelector('.page-kicker');
+
+    function clearActiveNav() {
+      navButtons.forEach(btn => btn.classList.remove('active'));
+    }
+
+    function hideAllViews() {
+      [dashboardView, dobView, patrolView, sitesView, guardsView, clientsView, settingsView, ukThreatCard].forEach(view => {
+        if (view) view.style.display = 'none';
+      });
+    }
+
+    function showDashboard() {
+      hideAllViews();
+      if (dashboardView) dashboardView.style.display = '';
+      if (ukThreatCard) ukThreatCard.style.display = '';
+      // Refresh when returning to Dashboard
+      loadUKThreatLevel();
+      document.title = 'Turlodales EDOB – Dashboard';
+      pageTitleEl.innerHTML = 'Tonight’s Security Overview <span style="font-size:0.8rem; color:var(--muted);"> 19:00–07:00</span>';
+      pageKickerEl.innerHTML = 'Monitoring <strong>24 sites</strong>, <strong>73 active guards</strong>, and <strong>3 open incidents</strong>.';
+    }
+
+    function showDOB() {
+      hideAllViews();
+      if (dobView) dobView.style.display = '';
+      document.title = 'Turlodales EDOB – Daily Occurrence Book';
+      pageTitleEl.textContent = 'Daily Occurrence Book';
+      pageKickerEl.innerHTML = 'All events, notes, patrol activities, and visitor logs recorded for this shift.';
+      renderDOBThreatLog();
+    }
+
+    function showPatrol() {
+      hideAllViews();
+      if (patrolView) patrolView.style.display = '';
+      document.title = 'Turlodales EDOB – Patrol Routes';
+      pageTitleEl.textContent = 'Patrol Routes';
+      pageKickerEl.innerHTML = 'Live patrol route assignments, check-ins, and missed scans for this shift.';
+    }
+
+    function showSites() {
+      hideAllViews();
+      if (sitesView) sitesView.style.display = '';
+      document.title = 'Turlodales EDOB – Sites';
+      pageTitleEl.textContent = 'Sites Directory';
+      pageKickerEl.innerHTML = 'Overview of all protected locations, guard cover, and recent incidents.';
+    }
+
+    function showGuards() {
+      hideAllViews();
+      if (guardsView) guardsView.style.display = '';
+      document.title = 'Turlodales EDOB – Guards';
+      pageTitleEl.textContent = 'Guard Roster';
+      pageKickerEl.innerHTML = 'Live overview of guards on shift, assignments, and status.';
+    }
+
+    function showClients() {
+      hideAllViews();
+      if (clientsView) clientsView.style.display = '';
+      document.title = 'Turlodales EDOB – Clients';
+      pageTitleEl.textContent = 'Client Overview';
+      pageKickerEl.innerHTML = 'Key client accounts, associated sites, and review status.';
+    }
+
+    function showSettings() {
+      hideAllViews();
+      if (settingsView) settingsView.style.display = '';
+      document.title = 'Turlodales EDOB – Settings';
+      pageTitleEl.textContent = 'Control Room Settings';
+      pageKickerEl.innerHTML = 'Configure alerts, table density, and other console preferences for this EDOB station.';
+    }
+
+    if (dashboardBtn) {
+      dashboardBtn.addEventListener('click', () => {
+        clearActiveNav();
+        dashboardBtn.classList.add('active');
+        showDashboard();
+      });
+    }
+
+    if (dobBtn) {
+      dobBtn.addEventListener('click', () => {
+        clearActiveNav();
+        dobBtn.classList.add('active');
+        showDOB();
+      });
+    }
+
+    if (patrolBtn) {
+      patrolBtn.addEventListener('click', () => {
+        clearActiveNav();
+        patrolBtn.classList.add('active');
+        showPatrol();
+      });
+    }
+
+    if (sitesBtn) {
+      sitesBtn.addEventListener('click', () => {
+        clearActiveNav();
+        sitesBtn.classList.add('active');
+        showSites();
+      });
+    }
+
+    if (guardsBtn) {
+      guardsBtn.addEventListener('click', () => {
+        clearActiveNav();
+        guardsBtn.classList.add('active');
+        showGuards();
+      });
+    }
+
+    if (clientsBtn) {
+      clientsBtn.addEventListener('click', () => {
+        clearActiveNav();
+        clientsBtn.classList.add('active');
+        showClients();
+      });
+    }
+
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', () => {
+        clearActiveNav();
+        settingsBtn.classList.add('active');
+        showSettings();
+      });
+    }
+
+    // Settings toggles (visual only)
+    document.querySelectorAll('.setting-toggle').forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('on');
+      });
+    });
+
+    // Threat Level Log for DOB
+    function renderDOBThreatLog() {
+      const body = document.getElementById('dob-threat-log-body');
+      if (!body) return;
+
+      const history = getThreatHistory();
+      body.innerHTML = '';
+
+      history.slice(0, 10).forEach(item => {
+        const tr = document.createElement('tr');
+
+        const tdTime = document.createElement('td');
+        tdTime.textContent = fmtTime(item.at || '');
+
+        const tdLevel = document.createElement('td');
+        const pill = document.createElement('span');
+        const lvl = (item.level || '').toLowerCase();
+        pill.className = 'badge-status ' + ((lvl === 'severe' || lvl === 'critical') ? 'open' : 'closed');
+        pill.textContent = (item.level || 'UNKNOWN').toUpperCase();
+        tdLevel.appendChild(pill);
+
+        const tdSource = document.createElement('td');
+        tdSource.textContent = item.source === 'cache' ? 'cached' : 'live';
+
+        tr.appendChild(tdTime);
+        tr.appendChild(tdLevel);
+        tr.appendChild(tdSource);
+
+        body.appendChild(tr);
+      });
+    }
+
+  </script>
+</body>
+</html>
+         
