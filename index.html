@@ -64,25 +64,25 @@
     }
 
     .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
       border: 1px solid rgba(148, 163, 184, 0.4);
       background: rgba(15, 23, 42, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px rgba(34, 197, 94, 0.35);
+      box-shadow: 0 0 30px rgba(34, 197, 94, 0.45);
       overflow: hidden;
     }
-    
+
     .brand-logo-img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      padding: 3px;
+      padding: 4px;
     }
-    
+
     .brand-text {
       display: flex;
       flex-direction: column;
@@ -327,11 +327,12 @@
 <body>
   <div class="auth-layout">
     <div class="auth-card">
-      
       <!-- Brand -->
-      <div class="brand-logo">
-            <img src="Turlodales_Security_Logo.png" alt="" class="brand-logo-img">
-          </div>
+      <div class="brand">
+        <div class="brand-logo">
+          <!-- Logo file location: ./assets/images/Turlodales_Security_Logo.png -->
+          <img src="./assets/images/Turlodales_Security_Logo.png" alt="Turlodales Security Logo" class="brand-logo-img">
+        </div>
         <div class="brand-text">
           <div class="brand-title">Turlodales EDOB</div>
           <div class="brand-sub">Control Room Login</div>
@@ -392,7 +393,7 @@
 
       <!-- Footer -->
       <div class="auth-footer">
-        <span>© 2025 Turlodales · EDOB Platform</span>
+        <span>© 2025 – <span id="currentYear"></span> Turlodales · EDOB Platform</span>
         <span>For authorised control room staff only.</span>
       </div>
 
@@ -407,7 +408,7 @@
   <a href="gdpr.html" target="_blank" rel="noopener noreferrer">GDPR Information</a>.
 </div>		
       <!-- Version Number -->
-      <div class="app-version">Version: V1.0.1</div>
+      <div class="app-version">Version: V1.0.2</div>
 
   <!-- Firebase SDKs (compat style for simplicity) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -415,14 +416,14 @@
 
   <script>
     // TODO: Replace this config with your own from the Firebase console
-    const firebaseConfig = {
-      apiKey: "AIzaSyAa1_MJoHshYMALo-mLjxxNXQnmnc3rVD8",
-      authDomain: "turlodalessecurity.firebaseapp.com",
-      projectId: "turlodalessecurity",
-      storageBucket: "turlodalessecurity.appspot.com",
-      messagingSenderId: "733342888646",
-      appId: "1:733342888646:web:1e15c31e46003b60829dc7"
-    };
+    // const firebaseConfig = {
+    //   apiKey: "AIzaSyAa1_MJoHshYMALo-mLjxxNXQnmnc3rVD8",
+    //   authDomain: "turlodalessecurity.firebaseapp.com",
+    //   projectId: "turlodalessecurity",
+    //   storageBucket: "turlodalessecurity.appspot.com",
+    //   messagingSenderId: "733342888646",
+    //   appId: "1:733342888646:web:1e15c31e46003b60829dc7"
+    // };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
@@ -531,6 +532,9 @@
         loginButtonArrow.textContent = '⟶';
       }
     }
+</script>
+  <script>
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
